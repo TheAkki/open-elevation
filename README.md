@@ -1,7 +1,9 @@
 # Open-Elevation - Remake
 ### ↓ Read install instructions below ↓
 
-A free and open-source elevation API by Jorl17. The original is available at: [https://github.com/Jorl17/open-elevation](https://github.com/Jorl17/open-elevation). Thanks for your work.
+A free and open-source elevation API by Jorl17. The original is available at: [https://github.com/Jorl17/open-elevation](https://github.com/Jorl17/open-elevation).
+Also forked from Developer66 [https://github.com/Developer66/open-elevation](https://github.com/Developer66/open-elevation).
+Thanks for your work.
 
 
 **Open-Elevation** is a free and open-source alternative to the [Google Elevation API](https://developers.google.com/maps/documentation/elevation/start) and similar offerings.
@@ -13,10 +15,8 @@ Open-Elevation API Doc for details and ustage
 
 
 -----
-# Changes to the original version:
-* changing TIFF file locations - to working one - for SRTM 250m data in download script
-* changing create-dataset.sh to work again
-* fixing download scripts
+# Changes to the original and forked version:
+* Prepare for using 30m Data
 
 ### News:
 * added a preinstall documentation for dependencies
@@ -97,7 +97,7 @@ Fist of all clone this repository to your favourite location. (Use a permanent p
        http://0.0.0.0:10000/api/v1/lookup?locations=48.179138,10.703618
        ```
     
-### 90m TanDEM added myselfe (ca. 100GB)
+### 90m TanDEM
 
 **Following step 1 to 3 from above**
 
@@ -120,7 +120,7 @@ Than:
     *Optional number of Threads (default is 4)* -n=4
     
     Example:
-    java -jar C:\TanDEM90mDownloader.jar -i=C:\urllist.txt -o=C:\data -u=max@mustermann.de -p=xyz1234
+    java -jar ./TanDEM90mDownloader.jar -i=urllist.txt -o=data -u=max@mustermann.de -p=xyz1234
     ```
     
     The program than automatically download the zips, extract them and copy the DEM data to your output dir and deletes the zip after that to save storage.
@@ -134,19 +134,25 @@ Than:
        http://0.0.0.0:10000/api/v1/lookup?locations=48.179138,10.703618
        ```
 
-# ! WARNING !
-Files from https://geoservice.dlr.de/ 30M are a little bit larger than the original files. 
+### 30m SRTM
+It seems that you don't find 30M data at https://geoservice.dlr.de/ anymore. So use https://earthexplorer.usgs.gov instead. Use Data sets "SRTM 1 Arc-Second Global" (You need an account to download it). Save the GeoTIFF data in your data folder.
 
-*Infos from https://geoservice.dlr.de/web/dataguide/tdm90/ (2019.02.01).*
+When using that it's possible that you see following error messages from your server when running a request. 
+```
+ERROR 1: TIFFReadEncodedStrip:Read error at scanline 4294967295; got 2370 bytes, expected 7202
+ERROR 1: TIFFReadEncodedStrip() failed.
+ERROR 1: data/n49_e016_1arc_v3.tif, band 1: IReadBlock failed at X offset 0, Y offset 0
+ERROR 1: GetBlockRef failed at X block offset 0, Y block offset 0
+'NoneType' object has no attribute '__getitem__'
+```
 
-| Key | Value
-| -------- | --------
-| Number of DEM products     | 19389  
-| Size of the global data set, zipped (including all annotations) | 253 GB
-| Size of the global data set, unzipped (including all annotations) | 534 GB
-| Size of all DEM raster files (unzipped, without annotations or meta data) | 93.8 GB
+Then it's neccessary that you create smaller tiles. You can do that with following command in the root folder of this project.
 
------
+```
+create-tiles-inFolder.sh data 10 10
+```
+Restart/Start your server.
+
 
 # Install using docker (oringal not tested)
 
